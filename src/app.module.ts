@@ -4,6 +4,7 @@ import { AuthenticationModule } from './modules/authentication/authentication.mo
 import { DatabaseModule } from './modules/database/database.module';
 import { TodosModule } from './modules/todos/todos.module';
 import { CoreModule } from './core/core.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { CoreModule } from './core/core.module';
     DatabaseModule,
     TodosModule,
     CoreModule,
+    HealthModule,
   ],
   controllers: [],
   providers: [],
