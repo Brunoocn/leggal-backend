@@ -39,7 +39,6 @@ export class InMemoryUserRepository {
     const existingIndex = this.users.findIndex((u) => u.id === user.id);
 
     if (existingIndex >= 0) {
-      // Update existing user
       const updatedUser = this.users[existingIndex];
       updatedUser.name = user.name;
       updatedUser.email = user.email;
@@ -48,7 +47,6 @@ export class InMemoryUserRepository {
       return updatedUser;
     }
 
-    // Create new user
     this.users.push(user);
     return user;
   }

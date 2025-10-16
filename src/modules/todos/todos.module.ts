@@ -8,6 +8,8 @@ import { GetOneTodoService } from './services/get-one/get-one-todo.service';
 import { UpdateTodoService } from './services/update/update-todo.service';
 import { DeleteTodoService } from './services/delete/delete-todo.service';
 import { CreateTodoWithAiService } from './services/create-with-ai/create-todo-with-ai.service';
+import { GenerateEmbeddingService } from './services/generate-embedding/generate-embedding.service';
+import { SemanticSearchService } from './services/semantic-search/semantic-search.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Todo])],
@@ -19,6 +21,8 @@ import { CreateTodoWithAiService } from './services/create-with-ai/create-todo-w
     UpdateTodoService,
     DeleteTodoService,
     CreateTodoWithAiService,
+    GenerateEmbeddingService,
+    SemanticSearchService,
   ],
   exports: [
     CreateTodoService,
@@ -27,6 +31,8 @@ import { CreateTodoWithAiService } from './services/create-with-ai/create-todo-w
     UpdateTodoService,
     DeleteTodoService,
     CreateTodoWithAiService,
+    GenerateEmbeddingService,
+    SemanticSearchService,
   ],
 })
 export class TodosModule {}

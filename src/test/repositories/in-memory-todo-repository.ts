@@ -36,7 +36,6 @@ export class InMemoryTodoRepository {
     const existingIndex = this.todos.findIndex((t) => t.id === todo.id);
 
     if (existingIndex >= 0) {
-      // Update existing todo
       const updatedTodo = this.todos[existingIndex];
       updatedTodo.title = todo.title;
       updatedTodo.description = todo.description;
@@ -45,7 +44,6 @@ export class InMemoryTodoRepository {
       return updatedTodo;
     }
 
-    // Create new todo
     this.todos.push(todo);
     return todo;
   }

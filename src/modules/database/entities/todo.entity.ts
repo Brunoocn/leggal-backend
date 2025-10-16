@@ -1,5 +1,7 @@
 import { Entity, Column } from 'typeorm';
 import { BaseEntity } from './base.entity';
+import { EmbeddingTransformer } from 'src/modules/todos/utils/embedding.transformer';
+import { Exclude } from 'class-transformer';
 
 export enum TodoUrgency {
   LOW = 'low',
@@ -22,4 +24,13 @@ export class Todo extends BaseEntity {
     default: TodoUrgency.LOW,
   })
   urgency: TodoUrgency;
+
+  @Exclude()
+  @Column({
+    type: 'text',
+    nullable: true,
+    transformer: new EmbeddingTransformer(),
+    select: false,
+  })
+  embedding: number[] | null;
 }
