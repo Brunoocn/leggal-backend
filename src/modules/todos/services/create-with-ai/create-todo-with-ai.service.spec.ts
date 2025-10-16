@@ -3,13 +3,13 @@ import { CreateTodoWithAiService } from './create-todo-with-ai.service';
 import { BadRequestException } from '@nestjs/common';
 import { InMemoryTodoRepository } from 'src/test/repositories/in-memory-todo-repository';
 import { TodoUrgency } from 'src/modules/database/entities/todo.entity';
-import { OpenAiProvider } from 'src/core/providers/openai/implementations/openai-provider';
+import { IOpenAiProvider } from 'src/core/providers/openai/IOpenAiProvider';
 import { GenerateEmbeddingService } from '../generate-embedding/generate-embedding.service';
 
 describe('CreateTodoWithAiService', () => {
   let sut: CreateTodoWithAiService;
   let todoRepository: InMemoryTodoRepository;
-  let openAiProvider: OpenAiProvider;
+  let openAiProvider: IOpenAiProvider;
   let generateEmbeddingService: GenerateEmbeddingService;
 
   const mockEmbedding = Array(1536).fill(0.1);
@@ -25,6 +25,7 @@ describe('CreateTodoWithAiService', () => {
 
     openAiProvider = {
       generateCompletion: vi.fn().mockResolvedValue(mockAiResponse),
+      generateEmbedding: vi.fn().mockResolvedValue(mockEmbedding),
     } as any;
 
     generateEmbeddingService = {

@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import { Todo, TodoUrgency } from 'src/modules/database/entities/todo.entity';
 import { ProvidersEnum } from 'src/shared/generic-enums/providers-enums';
 import { AI_PROMPT } from './prompts/ai-prompt';
-import { OpenAiProvider } from 'src/core/providers/openai/implementations/openai-provider';
+import { IOpenAiProvider } from 'src/core/providers/openai/IOpenAiProvider';
 import { GenerateEmbeddingService } from '../generate-embedding/generate-embedding.service';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class CreateTodoWithAiService {
     @InjectRepository(Todo)
     private readonly todoRepository: Repository<Todo>,
     @Inject(ProvidersEnum.OpenAiProvider)
-    private readonly openAiProvider: OpenAiProvider,
+    private readonly openAiProvider: IOpenAiProvider,
     private readonly generateEmbeddingService: GenerateEmbeddingService,
   ) {}
 
