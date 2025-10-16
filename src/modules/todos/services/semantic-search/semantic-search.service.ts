@@ -31,23 +31,12 @@ export class SemanticSearchService {
     limit: number = EMBEDDING_CONSTANTS.DEFAULT_SEARCH_LIMIT,
   ): Promise<SemanticSearchResult[]> {
     try {
-      this.logger.debug(`Performing semantic search for query: "${query}"`);
-
       const queryEmbedding =
         await this.generateEmbeddingService.generateFromText(query);
 
       const todos = await this.findTodosWithEmbeddings();
 
-      if (todos.length === 0) {
-        this.logger.warn('No todos with embeddings found');
-        return [];
-      }
-
-      this.logger.debug(`Found ${todos.length} todos with embeddings`);
-
       const results = this.calculateSimilarities(todos, queryEmbedding, limit);
-
-      this.logger.debug(`Returning ${results.length} search results`);
 
       return results;
     } catch (error) {
@@ -57,7 +46,7 @@ export class SemanticSearchService {
   }
 
   private async findTodosWithEmbeddings(): Promise<Todo[]> {
-    return this.todoRepository.find({
+    const findEmbeddings = await this.todoRepository.find({
       where: {
         embedding: Not(IsNull()),
       },
@@ -71,6 +60,8 @@ export class SemanticSearchService {
         'embedding',
       ],
     });
+
+    return findEmbeddings;
   }
 
   private calculateSimilarities(

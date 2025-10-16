@@ -25,7 +25,9 @@ export class UpdateTodoService {
     Object.assign(todo, updateTodoDTO);
 
     try {
-      todo.embedding = await this.generateEmbeddingService.generateForTodo(todo);
+      todo.embedding = await this.generateEmbeddingService.generateForTodo(
+        todo,
+      );
       return await this.todoRepository.save(todo);
     } catch (error) {
       this.logger.error(`Failed to update todo: ${error.message}`);

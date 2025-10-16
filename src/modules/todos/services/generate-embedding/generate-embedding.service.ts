@@ -3,12 +3,6 @@ import { IOpenAiProvider } from 'src/core/providers/openai/IOpenAiProvider';
 import { ProvidersEnum } from 'src/shared/generic-enums/providers-enums';
 import { Todo } from 'src/modules/database/entities/todo.entity';
 
-interface TodoEmbeddingContext {
-  title: string;
-  description?: string;
-  urgency: string;
-}
-
 @Injectable()
 export class GenerateEmbeddingService {
   private readonly logger = new Logger(GenerateEmbeddingService.name);
@@ -23,7 +17,6 @@ export class GenerateEmbeddingService {
       this.validateTodo(todo);
       const textToEmbed = this.buildTextFromTodo(todo);
 
-      this.logger.debug(`Generating embedding for todo: ${todo.title}`);
       const embedding = await this.openAiProvider.generateEmbedding(
         textToEmbed,
       );
@@ -44,7 +37,6 @@ export class GenerateEmbeddingService {
         throw new Error('Text for embedding cannot be empty');
       }
 
-      this.logger.debug(`Generating embedding for search query`);
       const embedding = await this.openAiProvider.generateEmbedding(text);
 
       this.validateEmbedding(embedding);
@@ -68,7 +60,11 @@ export class GenerateEmbeddingService {
   }
 
   private buildTextFromTodo(todo: Partial<Todo>): string {
-    const context: TodoEmbeddingContext = {
+    const context: {
+      title: string;
+      description?: string;
+      urgency: string;
+    } = {
       title: todo.title || '',
       description: todo.description,
       urgency: todo.urgency || 'low',

@@ -21,7 +21,9 @@ export class CreateTodoService {
     const todo = this.todoRepository.create(createTodoDTO);
 
     try {
-      todo.embedding = await this.generateEmbeddingService.generateForTodo(todo);
+      todo.embedding = await this.generateEmbeddingService.generateForTodo(
+        todo,
+      );
       return await this.todoRepository.save(todo);
     } catch (error) {
       this.logger.error(`Failed to create todo: ${error.message}`);

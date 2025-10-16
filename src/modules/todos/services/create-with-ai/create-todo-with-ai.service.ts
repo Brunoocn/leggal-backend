@@ -26,8 +26,6 @@ export class CreateTodoWithAiService {
 
   async createWithAi(userMessage: string): Promise<Todo> {
     try {
-      this.logger.debug(`Creating todo from AI input: "${userMessage}"`);
-
       const aiResponse = await this.openAiProvider.generateCompletion(
         AI_PROMPT,
         userMessage,
@@ -45,11 +43,7 @@ export class CreateTodoWithAiService {
         todo,
       );
 
-      const savedTodo = await this.todoRepository.save(todo);
-
-      this.logger.debug(`Successfully created todo with AI: ${savedTodo.id}`);
-
-      return savedTodo;
+      return this.todoRepository.save(todo);
     } catch (error) {
       this.logger.error(`Failed to create todo with AI: ${error.message}`);
       throw new BadRequestException(
@@ -65,10 +59,6 @@ export class CreateTodoWithAiService {
   } {
     try {
       const parsed = JSON.parse(aiResponse);
-
-      if (!parsed.title || parsed.title.trim() === '') {
-        throw new Error('AI response missing required field: title');
-      }
 
       return {
         title: parsed.title,
