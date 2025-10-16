@@ -38,4 +38,18 @@ export class OpenAiProvider implements IOpenAiProvider {
       throw new Error('Failed to generate AI completion');
     }
   }
+
+  async generateEmbedding(text: string): Promise<number[]> {
+    try {
+      const response = await this.openAi.embeddings.create({
+        model: 'text-embedding-3-small',
+        input: text,
+      });
+
+      return response.data[0].embedding;
+    } catch (error) {
+      console.error('Error generating embedding:', error);
+      throw new Error('Failed to generate embedding');
+    }
+  }
 }

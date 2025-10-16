@@ -1,0 +1,7 @@
+export const EMBEDDING_CONSTANTS = {
+  MODEL: 'text-embedding-3-small',
+  DIMENSION: 1536,
+  DEFAULT_SEARCH_LIMIT: 10,
+  MAX_SEARCH_LIMIT: 50,
+  MIN_SEARCH_LIMIT: 1,
+};

@@ -8,6 +8,7 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -22,10 +23,12 @@ import { GetOneTodoService } from '../services/get-one/get-one-todo.service';
 import { UpdateTodoService } from '../services/update/update-todo.service';
 import { DeleteTodoService } from '../services/delete/delete-todo.service';
 import { CreateTodoWithAiService } from '../services/create-with-ai/create-todo-with-ai.service';
+import { SemanticSearchService } from '../services/semantic-search/semantic-search.service';
 import { CreateTodoDTO } from '../dtos/create-todo.dto';
 import { UpdateTodoDTO } from '../dtos/update-todo.dto';
 import { TodoDTO } from '../dtos/todo.dto';
 import { CreateTodoWithAiDTO } from '../dtos/create-todo-with-ai.dto';
+import { SemanticSearchDTO } from '../dtos/semantic-search.dto';
 
 @ApiTags('Todos')
 @ApiBearerAuth()
@@ -38,6 +41,7 @@ export class TodosController {
     private readonly updateTodoService: UpdateTodoService,
     private readonly deleteTodoService: DeleteTodoService,
     private readonly createTodoWithAiService: CreateTodoWithAiService,
+    private readonly semanticSearchService: SemanticSearchService,
   ) {}
 
   @ApiOperation({ summary: 'Criar um novo todo' })
@@ -67,6 +71,21 @@ export class TodosController {
   async createWithAi(@Body() createTodoWithAiDTO: CreateTodoWithAiDTO) {
     return await this.createTodoWithAiService.createWithAi(
       createTodoWithAiDTO.userMessage,
+    );
+  }
+
+  @ApiOperation({ summary: 'Busca semântica de todos usando IA' })
+  @ApiResponse({
+    status: 200,
+    description: 'Todos encontrados por similaridade semântica',
+    type: [TodoDTO],
+  })
+  @Get('search/semantic')
+  @HttpCode(HttpStatus.OK)
+  async searchSemantic(@Query() searchDTO: SemanticSearchDTO) {
+    return await this.semanticSearchService.search(
+      searchDTO.query,
+      searchDTO.limit,
     );
   }
 

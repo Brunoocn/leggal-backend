@@ -1,20 +1,34 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { UpdateTodoService } from './update-todo.service';
 import { GetOneTodoService } from '../get-one/get-one-todo.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { UpdateTodoDTO } from '../../dtos/update-todo.dto';
 import { InMemoryTodoRepository } from 'src/test/repositories/in-memory-todo-repository';
 import { TodoUrgency } from 'src/modules/database/entities/todo.entity';
+import { GenerateEmbeddingService } from '../generate-embedding/generate-embedding.service';
 
 describe('UpdateTodoService', () => {
   let sut: UpdateTodoService;
   let todoRepository: InMemoryTodoRepository;
   let getOneTodoService: GetOneTodoService;
+  let generateEmbeddingService: GenerateEmbeddingService;
+
+  const mockEmbedding = Array(1536).fill(0.1);
 
   beforeEach(() => {
     todoRepository = new InMemoryTodoRepository();
     getOneTodoService = new GetOneTodoService(todoRepository as any);
-    sut = new UpdateTodoService(todoRepository as any, getOneTodoService);
+
+    generateEmbeddingService = {
+      generateForTodo: vi.fn().mockResolvedValue(mockEmbedding),
+      generateFromText: vi.fn(),
+    } as any;
+
+    sut = new UpdateTodoService(
+      todoRepository as any,
+      getOneTodoService,
+      generateEmbeddingService,
+    );
   });
 
   it('should successfully update a todo', async () => {

@@ -1,13 +1,17 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { CreateTodoService } from './create-todo.service';
 import { BadRequestException } from '@nestjs/common';
 import { CreateTodoDTO } from '../../dtos/create-todo.dto';
 import { InMemoryTodoRepository } from 'src/test/repositories/in-memory-todo-repository';
 import { TodoUrgency } from 'src/modules/database/entities/todo.entity';
+import { GenerateEmbeddingService } from '../generate-embedding/generate-embedding.service';
 
 describe('CreateTodoService', () => {
   let sut: CreateTodoService;
   let todoRepository: InMemoryTodoRepository;
+  let generateEmbeddingService: GenerateEmbeddingService;
+
+  const mockEmbedding = Array(1536).fill(0.1);
 
   const makeFakeTodoData = (
     overrides: Partial<CreateTodoDTO> = {},
@@ -20,7 +24,16 @@ describe('CreateTodoService', () => {
 
   beforeEach(() => {
     todoRepository = new InMemoryTodoRepository();
-    sut = new CreateTodoService(todoRepository as any);
+
+    generateEmbeddingService = {
+      generateForTodo: vi.fn().mockResolvedValue(mockEmbedding),
+      generateFromText: vi.fn(),
+    } as any;
+
+    sut = new CreateTodoService(
+      todoRepository as any,
+      generateEmbeddingService,
+    );
   });
 
   it('should successfully create a new todo', async () => {
