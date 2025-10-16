@@ -7,6 +7,7 @@ import { GetAllTodosService } from './services/get-all/get-all-todos.service';
 import { GetOneTodoService } from './services/get-one/get-one-todo.service';
 import { UpdateTodoService } from './services/update/update-todo.service';
 import { DeleteTodoService } from './services/delete/delete-todo.service';
+import { CreateTodoWithAiService } from './services/create-with-ai/create-todo-with-ai.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Todo])],
@@ -17,6 +18,7 @@ import { DeleteTodoService } from './services/delete/delete-todo.service';
     GetOneTodoService,
     UpdateTodoService,
     DeleteTodoService,
+    CreateTodoWithAiService,
   ],
   exports: [
     CreateTodoService,
@@ -24,6 +26,7 @@ import { DeleteTodoService } from './services/delete/delete-todo.service';
     GetOneTodoService,
     UpdateTodoService,
     DeleteTodoService,
+    CreateTodoWithAiService,
   ],
 })
 export class TodosModule {}

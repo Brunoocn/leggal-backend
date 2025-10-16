@@ -21,9 +21,11 @@ import { GetAllTodosService } from '../services/get-all/get-all-todos.service';
 import { GetOneTodoService } from '../services/get-one/get-one-todo.service';
 import { UpdateTodoService } from '../services/update/update-todo.service';
 import { DeleteTodoService } from '../services/delete/delete-todo.service';
+import { CreateTodoWithAiService } from '../services/create-with-ai/create-todo-with-ai.service';
 import { CreateTodoDTO } from '../dtos/create-todo.dto';
 import { UpdateTodoDTO } from '../dtos/update-todo.dto';
 import { TodoDTO } from '../dtos/todo.dto';
+import { CreateTodoWithAiDTO } from '../dtos/create-todo-with-ai.dto';
 
 @ApiTags('Todos')
 @ApiBearerAuth()
@@ -35,6 +37,7 @@ export class TodosController {
     private readonly getOneTodoService: GetOneTodoService,
     private readonly updateTodoService: UpdateTodoService,
     private readonly deleteTodoService: DeleteTodoService,
+    private readonly createTodoWithAiService: CreateTodoWithAiService,
   ) {}
 
   @ApiOperation({ summary: 'Criar um novo todo' })
@@ -47,6 +50,24 @@ export class TodosController {
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createTodoDTO: CreateTodoDTO) {
     return await this.createTodoService.create(createTodoDTO);
+  }
+
+  @ApiOperation({ summary: 'Criar um novo todo usando IA' })
+  @ApiResponse({
+    status: 201,
+    description: 'Todo criado com sucesso usando IA',
+    type: TodoDTO,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Falha ao processar entrada da IA',
+  })
+  @Post('ai')
+  @HttpCode(HttpStatus.CREATED)
+  async createWithAi(@Body() createTodoWithAiDTO: CreateTodoWithAiDTO) {
+    return await this.createTodoWithAiService.createWithAi(
+      createTodoWithAiDTO.userMessage,
+    );
   }
 
   @ApiOperation({ summary: 'Listar todos os todos' })

@@ -15,22 +15,27 @@ export class OpenAiProvider implements IOpenAiProvider {
   }
 
   async generateCompletion(prompt: string, message: string): Promise<string> {
-    const completion = await this.openAi.chat.completions.create({
-      model: 'gpt-4.1-nano',
-      messages: [
-        {
-          role: 'system',
-          content: prompt,
-        },
-        {
-          role: 'user',
-          content: message,
-        },
-      ],
-      temperature: 0.7,
-      max_tokens: this.maxTokens,
-    });
+    try {
+      const completion = await this.openAi.chat.completions.create({
+        model: 'gpt-4.1-nano',
+        messages: [
+          {
+            role: 'system',
+            content: prompt,
+          },
+          {
+            role: 'user',
+            content: message,
+          },
+        ],
+        temperature: 0.7,
+        max_tokens: this.maxTokens,
+      });
 
-    return completion.choices[0]?.message?.content || '';
+      return completion.choices[0]?.message?.content || '';
+    } catch (error) {
+      console.error('Error generating completion:', error);
+      throw new Error('Failed to generate AI completion');
+    }
   }
 }
