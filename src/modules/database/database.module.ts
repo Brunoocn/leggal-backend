@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PluralNamingStrategy } from 'src/config/plural-naming.strategy';
 import { ConfigModule } from '@nestjs/config';
 import { User } from './entities/user.entity';
+import { Todo } from './entities/todo.entity';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { User } from './entities/user.entity';
       username: process.env.PG_DATABASE_USER,
       password: process.env.PG_DATABASE_PASSWORD,
       database: process.env.PG_DATABASE_NAME,
-      entities: [User],
+      entities: [User, Todo],
       synchronize: true,
       namingStrategy: new PluralNamingStrategy(),
     }),
