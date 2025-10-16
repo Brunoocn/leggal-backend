@@ -1,0 +1,57 @@
+import { randomUUID } from 'node:crypto';
+import { Todo } from 'src/modules/database/entities/todo.entity';
+
+export class InMemoryTodoRepository {
+  private todos: Todo[] = [];
+
+  async findOne(options: { where: { id: string } }): Promise<Todo | null> {
+    const { id } = options.where;
+    return this.todos.find((todo) => todo.id === id) || null;
+  }
+
+  async find(options?: {
+    order?: { createdAt: 'DESC' | 'ASC' };
+  }): Promise<Todo[]> {
+    if (options?.order?.createdAt === 'DESC') {
+      return [...this.todos].sort(
+        (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+      );
+    }
+
+    return [...this.todos];
+  }
+
+  create(data: { title: string; description?: string; urgency?: any }): Todo {
+    const todo = new Todo();
+    todo.id = randomUUID();
+    todo.title = data.title;
+    todo.description = data.description;
+    todo.urgency = data.urgency;
+    todo.createdAt = new Date();
+    todo.updatedAt = new Date();
+    return todo;
+  }
+
+  async save(todo: Todo): Promise<Todo> {
+    const existingIndex = this.todos.findIndex((t) => t.id === todo.id);
+
+    if (existingIndex >= 0) {
+      const updatedTodo = this.todos[existingIndex];
+      updatedTodo.title = todo.title;
+      updatedTodo.description = todo.description;
+      updatedTodo.urgency = todo.urgency;
+      updatedTodo.updatedAt = new Date();
+      return updatedTodo;
+    }
+
+    this.todos.push(todo);
+    return todo;
+  }
+
+  async remove(todo: Todo): Promise<void> {
+    const index = this.todos.findIndex((t) => t.id === todo.id);
+    if (index >= 0) {
+      this.todos.splice(index, 1);
+    }
+  }
+}
