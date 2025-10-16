@@ -24,12 +24,16 @@ export class GenerateEmbeddingService {
       const textToEmbed = this.buildTextFromTodo(todo);
 
       this.logger.debug(`Generating embedding for todo: ${todo.title}`);
-      const embedding = await this.openAiProvider.generateEmbedding(textToEmbed);
+      const embedding = await this.openAiProvider.generateEmbedding(
+        textToEmbed,
+      );
 
       this.validateEmbedding(embedding);
       return embedding;
     } catch (error) {
-      this.logger.error(`Failed to generate embedding for todo: ${error.message}`);
+      this.logger.error(
+        `Failed to generate embedding for todo: ${error.message}`,
+      );
       throw new Error(`Embedding generation failed: ${error.message}`);
     }
   }
@@ -70,9 +74,7 @@ export class GenerateEmbeddingService {
       urgency: todo.urgency || 'low',
     };
 
-    const parts: string[] = [
-      `Título: ${context.title}`,
-    ];
+    const parts: string[] = [`Título: ${context.title}`];
 
     if (context.description) {
       parts.push(`Descrição: ${context.description}`);

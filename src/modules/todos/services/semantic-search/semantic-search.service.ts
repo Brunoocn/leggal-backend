@@ -84,6 +84,10 @@ export class SemanticSearchService {
         const similarity = cosineSimilarity(queryEmbedding, todo.embedding);
         return this.mapToSearchResult(todo, similarity);
       })
+      .filter(
+        (result) =>
+          result.similarity >= EMBEDDING_CONSTANTS.MIN_SIMILARITY_THRESHOLD,
+      )
       .sort((a, b) => b.similarity - a.similarity)
       .slice(0, limit);
   }
