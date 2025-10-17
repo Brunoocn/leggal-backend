@@ -11,14 +11,36 @@ export class InMemoryTodoRepository {
 
   async find(options?: {
     order?: { createdAt: 'DESC' | 'ASC' };
+    skip?: number;
+    take?: number;
   }): Promise<Todo[]> {
+    let result = [...this.todos];
+
     if (options?.order?.createdAt === 'DESC') {
-      return [...this.todos].sort(
+      result = result.sort(
         (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
       );
     }
 
-    return [...this.todos];
+    if (options?.skip !== undefined) {
+      result = result.slice(options.skip);
+    }
+
+    if (options?.take !== undefined) {
+      result = result.slice(0, options.take);
+    }
+
+    return result;
+  }
+
+  async findAndCount(options?: {
+    order?: { createdAt: 'DESC' | 'ASC' };
+    skip?: number;
+    take?: number;
+  }): Promise<[Todo[], number]> {
+    const total = this.todos.length;
+    const data = await this.find(options);
+    return [data, total];
   }
 
   create(data: { title: string; description?: string; urgency?: any }): Todo {

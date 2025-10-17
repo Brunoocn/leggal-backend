@@ -60,6 +60,10 @@ export class CreateTodoWithAiService {
     try {
       const parsed = JSON.parse(aiResponse);
 
+      if (!parsed.title) {
+        throw new Error('AI response is missing required field: title');
+      }
+
       return {
         title: parsed.title,
         description: parsed.description || '',

@@ -29,6 +29,7 @@ import { UpdateTodoDTO } from '../dtos/update-todo.dto';
 import { TodoDTO } from '../dtos/todo.dto';
 import { CreateTodoWithAiDTO } from '../dtos/create-todo-with-ai.dto';
 import { SemanticSearchDTO } from '../dtos/semantic-search.dto';
+import { FindAllTodosDTO } from '../dtos/find-all.dto';
 
 @ApiTags('Todos')
 @ApiBearerAuth()
@@ -97,8 +98,8 @@ export class TodosController {
   })
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll() {
-    return await this.getAllTodosService.findAll();
+  async findAll(@Query() findAllDTO: FindAllTodosDTO) {
+    return await this.getAllTodosService.findAll(findAllDTO);
   }
 
   @ApiOperation({ summary: 'Buscar um todo por ID' })
