@@ -24,7 +24,7 @@ export class CreateTodoWithAiService {
     private readonly generateEmbeddingService: GenerateEmbeddingService,
   ) {}
 
-  async createWithAi(userMessage: string): Promise<Todo> {
+  async createWithAi(userMessage: string, userId: string): Promise<Todo> {
     try {
       const aiResponse = await this.openAiProvider.generateCompletion(
         AI_PROMPT,
@@ -37,6 +37,7 @@ export class CreateTodoWithAiService {
         title: todoData.title,
         description: todoData.description,
         urgency: todoData.urgency,
+        user: { id: userId },
       });
 
       todo.embedding = await this.generateEmbeddingService.generateForTodo(
@@ -60,14 +61,10 @@ export class CreateTodoWithAiService {
     try {
       const parsed = JSON.parse(aiResponse);
 
-      if (!parsed.title) {
-        throw new Error('AI response is missing required field: title');
-      }
-
       return {
         title: parsed.title,
-        description: parsed.description || '',
-        urgency: parsed.urgency || 'low',
+        description: parsed.description,
+        urgency: parsed.urgency,
       };
     } catch (error) {
       throw new Error(`Failed to parse AI response: ${error.message}`);

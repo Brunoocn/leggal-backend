@@ -33,7 +33,7 @@ export class GenerateEmbeddingService {
 
   async generateFromText(text: string): Promise<number[]> {
     try {
-      if (!text || text.trim().length === 0) {
+      if (!text) {
         throw new Error('Text for embedding cannot be empty');
       }
 
@@ -48,8 +48,8 @@ export class GenerateEmbeddingService {
   }
 
   private validateTodo(todo: Partial<Todo>): void {
-    if (!todo.title || todo.title.trim().length === 0) {
-      throw new Error('Todo title is required for embedding generation');
+    if (!todo.title || !todo.urgency || !todo.description) {
+      throw new Error('Todo must have title, description, and urgency');
     }
   }
 
@@ -62,12 +62,14 @@ export class GenerateEmbeddingService {
   private buildTextFromTodo(todo: Partial<Todo>): string {
     const context: {
       title: string;
-      description?: string;
+      description: string;
       urgency: string;
+      userId: string;
     } = {
-      title: todo.title || '',
+      title: todo.title,
       description: todo.description,
-      urgency: todo.urgency || 'low',
+      urgency: todo.urgency,
+      userId: todo.user.id,
     };
 
     const parts: string[] = [`Título: ${context.title}`];
@@ -77,6 +79,8 @@ export class GenerateEmbeddingService {
     }
 
     parts.push(`Urgência: ${context.urgency}`);
+
+    parts.push(`ID do Usuário: ${context.userId}`);
 
     return parts.join('\n');
   }

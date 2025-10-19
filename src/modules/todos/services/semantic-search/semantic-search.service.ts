@@ -29,12 +29,13 @@ export class SemanticSearchService {
   async search(
     query: string,
     limit: number = EMBEDDING_CONSTANTS.DEFAULT_SEARCH_LIMIT,
+    userId: string,
   ): Promise<SemanticSearchResult[]> {
     try {
       const queryEmbedding =
         await this.generateEmbeddingService.generateFromText(query);
 
-      const todos = await this.findTodosWithEmbeddings();
+      const todos = await this.findTodosWithEmbeddings(userId);
 
       const results = this.calculateSimilarities(todos, queryEmbedding, limit);
 
@@ -45,10 +46,13 @@ export class SemanticSearchService {
     }
   }
 
-  private async findTodosWithEmbeddings(): Promise<Todo[]> {
+  private async findTodosWithEmbeddings(userId: string): Promise<Todo[]> {
     const findEmbeddings = await this.todoRepository.find({
       where: {
         embedding: Not(IsNull()),
+        user: {
+          id: userId,
+        },
       },
       select: [
         'id',

@@ -20,8 +20,6 @@ export class UpdateTodoService {
   async update(id: string, updateTodoDTO: UpdateTodoDTO): Promise<Todo> {
     const todo = await this.getOneTodoService.findOne(id);
 
-    this.validateTitle(updateTodoDTO.title);
-
     Object.assign(todo, updateTodoDTO);
 
     try {
@@ -32,12 +30,6 @@ export class UpdateTodoService {
     } catch (error) {
       this.logger.error(`Failed to update todo: ${error.message}`);
       throw new BadRequestException('Failed to update todo with embedding');
-    }
-  }
-
-  private validateTitle(title?: string): void {
-    if (title !== undefined && title.trim() === '') {
-      throw new BadRequestException('Título não pode ser vazio');
     }
   }
 }

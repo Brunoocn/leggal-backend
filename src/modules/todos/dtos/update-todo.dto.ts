@@ -6,11 +6,10 @@ export class UpdateTodoDTO {
   @ApiProperty({
     example: 'Finalizar relatório',
     description: 'Título do todo',
-    required: false,
+    required: true,
   })
   @IsString()
-  @IsOptional()
-  readonly title?: string;
+  readonly title: string;
 
   @ApiProperty({
     example: 'Finalizar o relatório mensal até sexta-feira',
@@ -25,9 +24,8 @@ export class UpdateTodoDTO {
     example: 'high',
     description: 'Urgência do todo',
     enum: TodoUrgency,
-    required: false,
+    required: true,
   })
   @IsEnum(TodoUrgency)
-  @IsOptional()
-  readonly urgency?: TodoUrgency;
+  readonly urgency: TodoUrgency;
 }
