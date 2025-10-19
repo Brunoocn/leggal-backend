@@ -33,7 +33,7 @@ export class GenerateEmbeddingService {
 
   async generateFromText(text: string): Promise<number[]> {
     try {
-      if (!text) {
+      if (!text || text.trim().length === 0) {
         throw new Error('Text for embedding cannot be empty');
       }
 
