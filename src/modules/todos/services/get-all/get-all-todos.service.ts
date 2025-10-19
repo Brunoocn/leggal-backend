@@ -13,7 +13,7 @@ export class GetAllTodosService {
     private todoRepository: Repository<Todo>,
   ) {}
 
-  async findAll({ page, pageSize }: FindAllTodosDTO): Promise<{
+  async findAll({ page = 1, pageSize = 10 }: FindAllTodosDTO): Promise<{
     list: Todo[];
     paging: { total: number; page?: number; pages?: number };
   }> {

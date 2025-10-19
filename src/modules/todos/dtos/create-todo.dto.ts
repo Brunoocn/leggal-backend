@@ -27,6 +27,5 @@ export class CreateTodoDTO {
     default: TodoUrgency.LOW,
   })
   @IsEnum(TodoUrgency)
-  @IsOptional()
-  readonly urgency?: TodoUrgency;
+  readonly urgency: TodoUrgency;
 }

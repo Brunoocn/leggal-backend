@@ -54,7 +54,7 @@ export class TodosController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createTodoDTO: CreateTodoDTO) {
-    return await this.createTodoService.create(createTodoDTO);
+    return this.createTodoService.create(createTodoDTO);
   }
 
   @ApiOperation({ summary: 'Criar um novo todo usando IA' })
@@ -70,7 +70,7 @@ export class TodosController {
   @Post('ai')
   @HttpCode(HttpStatus.CREATED)
   async createWithAi(@Body() createTodoWithAiDTO: CreateTodoWithAiDTO) {
-    return await this.createTodoWithAiService.createWithAi(
+    return this.createTodoWithAiService.createWithAi(
       createTodoWithAiDTO.userMessage,
     );
   }
@@ -84,10 +84,7 @@ export class TodosController {
   @Get('search/semantic')
   @HttpCode(HttpStatus.OK)
   async searchSemantic(@Query() searchDTO: SemanticSearchDTO) {
-    return await this.semanticSearchService.search(
-      searchDTO.query,
-      searchDTO.limit,
-    );
+    return this.semanticSearchService.search(searchDTO.query, searchDTO.limit);
   }
 
   @ApiOperation({ summary: 'Listar todos os todos' })
@@ -99,7 +96,7 @@ export class TodosController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(@Query() findAllDTO: FindAllTodosDTO) {
-    return await this.getAllTodosService.findAll(findAllDTO);
+    return this.getAllTodosService.findAll(findAllDTO);
   }
 
   @ApiOperation({ summary: 'Buscar um todo por ID' })
@@ -120,7 +117,7 @@ export class TodosController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id') id: string) {
-    return await this.getOneTodoService.findOne(id);
+    return this.getOneTodoService.findOne(id);
   }
 
   @ApiOperation({ summary: 'Atualizar um todo' })
@@ -141,7 +138,7 @@ export class TodosController {
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
   async update(@Param('id') id: string, @Body() updateTodoDTO: UpdateTodoDTO) {
-    return await this.updateTodoService.update(id, updateTodoDTO);
+    return this.updateTodoService.update(id, updateTodoDTO);
   }
 
   @ApiOperation({ summary: 'Deletar um todo' })
@@ -161,6 +158,6 @@ export class TodosController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string) {
-    return await this.deleteTodoService.remove(id);
+    return this.deleteTodoService.remove(id);
   }
 }

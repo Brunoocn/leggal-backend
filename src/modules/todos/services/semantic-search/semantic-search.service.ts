@@ -4,7 +4,7 @@ import { Not, Repository, IsNull } from 'typeorm';
 import { Todo } from 'src/modules/database/entities/todo.entity';
 import { GenerateEmbeddingService } from '../generate-embedding/generate-embedding.service';
 import { cosineSimilarity } from '../../utils/cosine-similarity.util';
-import { EMBEDDING_CONSTANTS } from '../../constants/embedding.constants';
+import { EMBEDDING_CONSTANTS } from 'src/shared/constants/embedding.constants';
 
 export interface SemanticSearchResult {
   id: string;
