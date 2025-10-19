@@ -34,13 +34,39 @@ export class InMemoryTodoRepository {
   }
 
   async findAndCount(options?: {
+    where?: { user?: { id: string } };
     order?: { createdAt: 'DESC' | 'ASC' };
     skip?: number;
     take?: number;
   }): Promise<[Todo[], number]> {
-    const total = this.todos.length;
-    const data = await this.find(options);
-    return [data, total];
+    let filteredTodos = [...this.todos];
+
+    // Filtrar por user.id se fornecido
+    if (options?.where?.user?.id) {
+      filteredTodos = filteredTodos.filter(
+        (todo) => todo.user?.id === options.where.user.id,
+      );
+    }
+
+    const total = filteredTodos.length;
+
+    // Aplicar ordenação
+    if (options?.order?.createdAt === 'DESC') {
+      filteredTodos = filteredTodos.sort(
+        (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+      );
+    }
+
+    // Aplicar paginação
+    if (options?.skip !== undefined) {
+      filteredTodos = filteredTodos.slice(options.skip);
+    }
+
+    if (options?.take !== undefined) {
+      filteredTodos = filteredTodos.slice(0, options.take);
+    }
+
+    return [filteredTodos, total];
   }
 
   create(data: { title: string; description?: string; urgency?: any }): Todo {

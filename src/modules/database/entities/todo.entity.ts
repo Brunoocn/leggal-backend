@@ -1,7 +1,8 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { EmbeddingTransformer } from 'src/modules/todos/utils/embedding.transformer';
 import { Exclude } from 'class-transformer';
+import { User } from './user.entity';
 
 export enum TodoUrgency {
   LOW = 'low',
@@ -24,6 +25,9 @@ export class Todo extends BaseEntity {
     default: TodoUrgency.LOW,
   })
   urgency: TodoUrgency;
+
+  @ManyToOne(() => User, (user) => user.todos, { nullable: false })
+  user: User;
 
   @Exclude()
   @Column({

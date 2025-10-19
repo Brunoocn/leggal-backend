@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Todo } from '../database/entities/todo.entity';
+import { User } from '../database/entities/user.entity';
 import { TodosController } from './controllers/todos.controller';
 import { CreateTodoService } from './services/create/create-todo.service';
 import { GetAllTodosService } from './services/get-all/get-all-todos.service';
@@ -12,7 +13,7 @@ import { GenerateEmbeddingService } from './services/generate-embedding/generate
 import { SemanticSearchService } from './services/semantic-search/semantic-search.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Todo])],
+  imports: [TypeOrmModule.forFeature([Todo, User])],
   controllers: [TodosController],
   providers: [
     CreateTodoService,

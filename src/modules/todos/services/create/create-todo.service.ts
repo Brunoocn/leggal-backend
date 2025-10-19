@@ -15,10 +15,14 @@ export class CreateTodoService {
     private readonly generateEmbeddingService: GenerateEmbeddingService,
   ) {}
 
-  async create(createTodoDTO: CreateTodoDTO): Promise<Todo> {
+  async create(createTodoDTO: CreateTodoDTO, userId: string): Promise<Todo> {
     this.validateTitle(createTodoDTO.title);
 
-    const todo = this.todoRepository.create(createTodoDTO);
+    const formattedCreateTodoDTO = {
+      ...createTodoDTO,
+      user: { id: userId },
+    };
+    const todo = this.todoRepository.create(formattedCreateTodoDTO);
 
     try {
       todo.embedding = await this.generateEmbeddingService.generateForTodo(
