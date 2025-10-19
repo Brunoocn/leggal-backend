@@ -13,14 +13,23 @@ export class GetAllTodosService {
     private todoRepository: Repository<Todo>,
   ) {}
 
-  async findAll({ page = 1, pageSize = 10 }: FindAllTodosDTO): Promise<{
+  async findAll(
+    { page = 1, pageSize = 10 }: FindAllTodosDTO,
+    userId: string,
+  ): Promise<{
     list: Todo[];
     paging: { total: number; page?: number; pages?: number };
   }> {
+    const where = {
+      user: {
+        id: userId,
+      },
+    };
     const [data, total] = await this.todoRepository.findAndCount({
       skip: getSkip({ page, pageSize }),
       take: pageSize,
       order: { createdAt: 'DESC' },
+      where,
     });
 
     return {

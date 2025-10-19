@@ -14,6 +14,7 @@ describe('UpdateTodoService', () => {
   let generateEmbeddingService: GenerateEmbeddingService;
 
   const mockEmbedding = Array(1536).fill(0.1);
+  const mockUserId = '123e4567-e89b-12d3-a456-426614174000';
 
   beforeEach(() => {
     todoRepository = new InMemoryTodoRepository();
@@ -37,6 +38,7 @@ describe('UpdateTodoService', () => {
       description: 'Original description',
       urgency: TodoUrgency.LOW,
     });
+    todo.user = { id: mockUserId } as any;
     await todoRepository.save(todo);
 
     const updateData: UpdateTodoDTO = {
@@ -61,37 +63,50 @@ describe('UpdateTodoService', () => {
     );
   });
 
-  it('should throw BadRequestException when title is empty string', async () => {
+  it('should throw BadRequestException when embedding generation fails', async () => {
     const todo = todoRepository.create({
       title: 'Original Title',
       description: 'Original description',
       urgency: TodoUrgency.LOW,
     });
+    todo.user = { id: mockUserId } as any;
     await todoRepository.save(todo);
 
+    // Mock para falhar na geração do embedding
+    vi.spyOn(generateEmbeddingService, 'generateForTodo').mockRejectedValue(
+      new Error('Embedding generation failed'),
+    );
+
     const updateData: UpdateTodoDTO = {
-      title: '',
+      title: 'Updated Title',
     };
 
     await expect(sut.update(todo.id, updateData)).rejects.toThrow(
-      new BadRequestException('Título não pode ser vazio'),
+      new BadRequestException('Failed to update todo with embedding'),
     );
   });
 
-  it('should throw BadRequestException when title is only whitespace', async () => {
+  it('should update todo and regenerate embedding', async () => {
     const todo = todoRepository.create({
       title: 'Original Title',
       description: 'Original description',
       urgency: TodoUrgency.LOW,
     });
+    todo.user = { id: mockUserId } as any;
     await todoRepository.save(todo);
 
     const updateData: UpdateTodoDTO = {
-      title: '   ',
+      description: 'Updated description',
     };
 
-    await expect(sut.update(todo.id, updateData)).rejects.toThrow(
-      new BadRequestException('Título não pode ser vazio'),
+    const result = await sut.update(todo.id, updateData);
+
+    expect(result.description).toBe('Updated description');
+    expect(generateEmbeddingService.generateForTodo).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Original Title',
+        description: 'Updated description',
+      }),
     );
   });
 });

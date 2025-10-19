@@ -23,10 +23,8 @@ Para iniciá-lo, siga os passos abaixo:
 $ docker-compose up -d
 ```
 
-O server irá subir na porta http://localhost:3005.
+O server irá subir na porta http://localhost:3000.
 
 Para acessar a documentação da api, basta acessar http://localhost:3000/api/docs.
 
-Vale lembrar que você deve configurar .env como o .env.sample e o .env.prod como o .env.sample.prod
-
-
+Vale lembrar que você deve configurar .env como o .env.sample

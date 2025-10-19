@@ -17,6 +17,7 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { CreateTodoService } from '../services/create/create-todo.service';
 import { GetAllTodosService } from '../services/get-all/get-all-todos.service';
 import { GetOneTodoService } from '../services/get-one/get-one-todo.service';
@@ -53,8 +54,11 @@ export class TodosController {
   })
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createTodoDTO: CreateTodoDTO) {
-    return this.createTodoService.create(createTodoDTO);
+  async create(
+    @Body() createTodoDTO: CreateTodoDTO,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.createTodoService.create(createTodoDTO, userId);
   }
 
   @ApiOperation({ summary: 'Criar um novo todo usando IA' })
@@ -69,9 +73,13 @@ export class TodosController {
   })
   @Post('ai')
   @HttpCode(HttpStatus.CREATED)
-  async createWithAi(@Body() createTodoWithAiDTO: CreateTodoWithAiDTO) {
+  async createWithAi(
+    @Body() createTodoWithAiDTO: CreateTodoWithAiDTO,
+    @CurrentUser('id') userId: string,
+  ) {
     return this.createTodoWithAiService.createWithAi(
       createTodoWithAiDTO.userMessage,
+      userId,
     );
   }
 
@@ -83,8 +91,15 @@ export class TodosController {
   })
   @Get('search/semantic')
   @HttpCode(HttpStatus.OK)
-  async searchSemantic(@Query() searchDTO: SemanticSearchDTO) {
-    return this.semanticSearchService.search(searchDTO.query, searchDTO.limit);
+  async searchSemantic(
+    @Query() searchDTO: SemanticSearchDTO,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.semanticSearchService.search(
+      searchDTO.query,
+      searchDTO.limit,
+      userId,
+    );
   }
 
   @ApiOperation({ summary: 'Listar todos os todos' })
@@ -95,8 +110,11 @@ export class TodosController {
   })
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(@Query() findAllDTO: FindAllTodosDTO) {
-    return this.getAllTodosService.findAll(findAllDTO);
+  async findAll(
+    @Query() findAllDTO: FindAllTodosDTO,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.getAllTodosService.findAll(findAllDTO, userId);
   }
 
   @ApiOperation({ summary: 'Buscar um todo por ID' })

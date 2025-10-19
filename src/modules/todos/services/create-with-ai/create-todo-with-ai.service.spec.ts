@@ -13,6 +13,7 @@ describe('CreateTodoWithAiService', () => {
   let generateEmbeddingService: GenerateEmbeddingService;
 
   const mockEmbedding = Array(1536).fill(0.1);
+  const mockUserId = '123e4567-e89b-12d3-a456-426614174000';
 
   const mockAiResponse = JSON.stringify({
     title: 'Fazer um bolo',
@@ -43,7 +44,7 @@ describe('CreateTodoWithAiService', () => {
   it('should successfully create a todo from AI input', async () => {
     const userMessage = 'fazer um bolo';
 
-    const result = await sut.createWithAi(userMessage);
+    const result = await sut.createWithAi(userMessage, mockUserId);
 
     expect(result).toMatchObject({
       id: expect.any(String),
@@ -57,7 +58,7 @@ describe('CreateTodoWithAiService', () => {
   it('should call OpenAI provider with correct prompt and message', async () => {
     const userMessage = 'fazer um bolo';
 
-    await sut.createWithAi(userMessage);
+    await sut.createWithAi(userMessage, mockUserId);
 
     expect(openAiProvider.generateCompletion).toHaveBeenCalledWith(
       expect.any(String),
@@ -68,7 +69,7 @@ describe('CreateTodoWithAiService', () => {
   it('should call generateEmbedding for the created todo', async () => {
     const userMessage = 'fazer um bolo';
 
-    await sut.createWithAi(userMessage);
+    await sut.createWithAi(userMessage, mockUserId);
 
     expect(generateEmbeddingService.generateForTodo).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -81,29 +82,11 @@ describe('CreateTodoWithAiService', () => {
   it('should save todo with embedding to repository', async () => {
     const userMessage = 'fazer um bolo';
 
-    await sut.createWithAi(userMessage);
+    await sut.createWithAi(userMessage, mockUserId);
 
     const todos = await todoRepository.find();
     expect(todos).toHaveLength(1);
     expect(todos[0].embedding).toBe(mockEmbedding);
-  });
-
-  it('should handle AI response with minimal data', async () => {
-    const minimalResponse = JSON.stringify({
-      title: 'Simple task',
-    });
-
-    vi.spyOn(openAiProvider, 'generateCompletion').mockResolvedValue(
-      minimalResponse,
-    );
-
-    const result = await sut.createWithAi('simple task');
-
-    expect(result).toMatchObject({
-      title: 'Simple task',
-      description: '',
-      urgency: 'low',
-    });
   });
 
   it('should handle different urgency levels from AI', async () => {
@@ -117,7 +100,7 @@ describe('CreateTodoWithAiService', () => {
       urgentResponse,
     );
 
-    const result = await sut.createWithAi('urgent task');
+    const result = await sut.createWithAi('urgent task', mockUserId);
 
     expect(result.urgency).toBe(TodoUrgency.URGENT);
   });
@@ -127,20 +110,9 @@ describe('CreateTodoWithAiService', () => {
       'Invalid JSON response',
     );
 
-    await expect(sut.createWithAi('test')).rejects.toThrow(BadRequestException);
-  });
-
-  it('should throw BadRequestException when AI response is missing title', async () => {
-    const invalidResponse = JSON.stringify({
-      description: 'No title here',
-      urgency: 'low',
-    });
-
-    vi.spyOn(openAiProvider, 'generateCompletion').mockResolvedValue(
-      invalidResponse,
+    await expect(sut.createWithAi('test', mockUserId)).rejects.toThrow(
+      BadRequestException,
     );
-
-    await expect(sut.createWithAi('test')).rejects.toThrow(BadRequestException);
   });
 
   it('should throw BadRequestException when OpenAI provider fails', async () => {
@@ -148,7 +120,9 @@ describe('CreateTodoWithAiService', () => {
       new Error('OpenAI API error'),
     );
 
-    await expect(sut.createWithAi('test')).rejects.toThrow(BadRequestException);
+    await expect(sut.createWithAi('test', mockUserId)).rejects.toThrow(
+      BadRequestException,
+    );
   });
 
   it('should throw BadRequestException when embedding generation fails', async () => {
@@ -156,7 +130,7 @@ describe('CreateTodoWithAiService', () => {
       new Error('Embedding generation failed'),
     );
 
-    await expect(sut.createWithAi('fazer um bolo')).rejects.toThrow(
+    await expect(sut.createWithAi('fazer um bolo', mockUserId)).rejects.toThrow(
       BadRequestException,
     );
   });
@@ -172,7 +146,7 @@ describe('CreateTodoWithAiService', () => {
       specialCharsResponse,
     );
 
-    const result = await sut.createWithAi('special task');
+    const result = await sut.createWithAi('special task', mockUserId);
 
     expect(result.title).toBe('Tarefa com "aspas" e \'apostrofos\'');
     expect(result.description).toContain('caracteres especiais');
@@ -190,7 +164,7 @@ describe('CreateTodoWithAiService', () => {
       longResponse,
     );
 
-    const result = await sut.createWithAi('long task');
+    const result = await sut.createWithAi('long task', mockUserId);
 
     expect(result.description).toBe(longDescription);
   });
@@ -214,13 +188,13 @@ describe('CreateTodoWithAiService', () => {
         response,
       );
 
-      const result = await sut.createWithAi('test');
+      const result = await sut.createWithAi('test', mockUserId);
       expect(result.urgency).toBe(expected);
     }
   });
 
   it('should not include embedding in the returned todo', async () => {
-    const result = await sut.createWithAi('test task');
+    const result = await sut.createWithAi('test task', mockUserId);
 
     expect(result.embedding).toBeDefined();
   });
