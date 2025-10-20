@@ -19,12 +19,17 @@ $ cd leggal-case-backend.git
 Para iniciá-lo, siga os passos abaixo:
 
 ```bash
-# subir a aplicação com o docker
+# Copiar arquivo de configuração
+$ cp .env.sample .env
+
+# Editar o .env e configurar suas variáveis (JWT_SECRET, OPENAI_API_KEY, etc)
+
+# Subir a aplicação com o Docker
 $ docker-compose up -d
 ```
 
-O server irá subir na porta http://localhost:3000.
+O server irá subir na porta http://localhost:3005.
 
-Para acessar a documentação da api, basta acessar http://localhost:3000/api/docs.
+Para acessar a documentação da api, basta acessar http://localhost:3005/api/docs.
 
-Vale lembrar que você deve configurar .env como o .env.sample
+**Nota:** Ao rodar com Docker, o `PG_DATABASE_HOST` será automaticamente configurado como `db` pelo docker-compose. Para desenvolvimento local sem Docker, use `localhost`.

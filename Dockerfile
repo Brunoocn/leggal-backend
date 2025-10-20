@@ -2,22 +2,22 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-COPY package*.json yarn.lock ./
+RUN apk add --no-cache python3 make g++
 
-RUN npm cache clean --force
+COPY package.json yarn.lock ./
 
-RUN npm install --legacy-peer-deps
+RUN yarn install --frozen-lockfile
 
 COPY . .
 
+RUN yarn build
+
+RUN ls -la dist/
+
+RUN yarn install --frozen-lockfile --production && yarn cache clean
+
 RUN chmod +x /app/wait-for-it.sh
-
-RUN npm run build
-
-RUN rm -rf node_modules
-
-RUN npm install --legacy-peer-deps --production
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start:prod"]
+CMD ["node", "dist/main"]
