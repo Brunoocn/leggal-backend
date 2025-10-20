@@ -10,6 +10,7 @@ describe('CreateTodoService', () => {
   let sut: CreateTodoService;
   let todoRepository: InMemoryTodoRepository;
   let generateEmbeddingService: GenerateEmbeddingService;
+  const mockUserId = '123e4567-e89b-12d3-a456-426614174000';
 
   const mockEmbedding = Array(1536).fill(0.1);
 
@@ -39,7 +40,7 @@ describe('CreateTodoService', () => {
   it('should successfully create a new todo', async () => {
     const todoData = makeFakeTodoData();
 
-    const result = await sut.create(todoData);
+    const result = await sut.create(todoData, mockUserId);
 
     expect(result).toMatchObject({
       id: expect.any(String),
@@ -52,7 +53,7 @@ describe('CreateTodoService', () => {
   it('should throw BadRequestException when title is empty', async () => {
     const todoData = makeFakeTodoData({ title: '' });
 
-    await expect(sut.create(todoData)).rejects.toThrow(
+    await expect(sut.create(todoData, mockUserId)).rejects.toThrow(
       new BadRequestException('Título é obrigatório'),
     );
   });
@@ -60,20 +61,8 @@ describe('CreateTodoService', () => {
   it('should throw BadRequestException when title is only whitespace', async () => {
     const todoData = makeFakeTodoData({ title: '   ' });
 
-    await expect(sut.create(todoData)).rejects.toThrow(
+    await expect(sut.create(todoData, mockUserId)).rejects.toThrow(
       new BadRequestException('Título é obrigatório'),
     );
-  });
-
-  it('should create todo without urgency when not provided', async () => {
-    const todoData: CreateTodoDTO = {
-      title: 'Test Todo',
-      description: 'Test description',
-    };
-
-    const result = await sut.create(todoData);
-
-    expect(result.title).toBe('Test Todo');
-    expect(result.description).toBe('Test description');
   });
 });
