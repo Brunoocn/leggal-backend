@@ -48,8 +48,8 @@ export class GenerateEmbeddingService {
   }
 
   private validateTodo(todo: Partial<Todo>): void {
-    if (!todo.title || !todo.urgency || !todo.description) {
-      throw new Error('Todo must have title, description, and urgency');
+    if (!todo.title || !todo.urgency) {
+      throw new Error('Todo must have title and urgency');
     }
   }
 
@@ -60,16 +60,15 @@ export class GenerateEmbeddingService {
   }
 
   private buildTextFromTodo(todo: Partial<Todo>): string {
+    console.log('Building text from todo:', todo);
     const context: {
       title: string;
-      description: string;
+      description?: string;
       urgency: string;
-      userId: string;
     } = {
       title: todo.title,
-      description: todo.description,
+      description: todo.description || '',
       urgency: todo.urgency,
-      userId: todo.user.id,
     };
 
     const parts: string[] = [`Título: ${context.title}`];
@@ -79,8 +78,6 @@ export class GenerateEmbeddingService {
     }
 
     parts.push(`Urgência: ${context.urgency}`);
-
-    parts.push(`ID do Usuário: ${context.userId}`);
 
     return parts.join('\n');
   }
