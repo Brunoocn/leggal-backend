@@ -25,14 +25,13 @@ describe('GenerateEmbeddingService', () => {
         title: 'Comprar frutas',
         description: 'Ir ao mercado comprar maçãs e bananas',
         urgency: TodoUrgency.MEDIUM,
-        user: { id: mockUserId },
       };
 
       const result = await sut.generateForTodo(todo);
 
       expect(result).toEqual(mockEmbedding);
       expect(openAiProvider.generateEmbedding).toHaveBeenCalledWith(
-        `Título: Comprar frutas\nDescrição: Ir ao mercado comprar maçãs e bananas\nUrgência: medium\nID do Usuário: ${mockUserId}`,
+        `Título: Comprar frutas\nDescrição: Ir ao mercado comprar maçãs e bananas\nUrgência: medium`,
       );
     });
 
@@ -41,26 +40,13 @@ describe('GenerateEmbeddingService', () => {
         title: 'Fazer exercícios',
         description: 'Fazer exercícios de cardio',
         urgency: TodoUrgency.HIGH,
-        user: { id: mockUserId },
       };
 
       const result = await sut.generateForTodo(todo);
 
       expect(result).toEqual(mockEmbedding);
       expect(openAiProvider.generateEmbedding).toHaveBeenCalledWith(
-        `Título: Fazer exercícios\nDescrição: Fazer exercícios de cardio\nUrgência: high\nID do Usuário: ${mockUserId}`,
-      );
-    });
-
-    it('should throw error when todo is missing description', async () => {
-      const todo = {
-        title: 'Estudar TypeScript',
-        urgency: TodoUrgency.LOW,
-        user: { id: mockUserId },
-      };
-
-      await expect(sut.generateForTodo(todo)).rejects.toThrow(
-        'Embedding generation failed: Todo must have title, description, and urgency',
+        `Título: Fazer exercícios\nDescrição: Fazer exercícios de cardio\nUrgência: high`,
       );
     });
 
@@ -68,11 +54,10 @@ describe('GenerateEmbeddingService', () => {
       const todo = {
         description: 'Descrição sem título',
         urgency: TodoUrgency.LOW,
-        user: { id: mockUserId },
       };
 
       await expect(sut.generateForTodo(todo)).rejects.toThrow(
-        'Embedding generation failed: Todo must have title, description, and urgency',
+        'Embedding generation failed: Todo must have title and urgency',
       );
     });
 
@@ -80,11 +65,10 @@ describe('GenerateEmbeddingService', () => {
       const todo = {
         title: 'Test Title',
         description: 'Descrição',
-        user: { id: mockUserId },
       };
 
       await expect(sut.generateForTodo(todo)).rejects.toThrow(
-        'Embedding generation failed: Todo must have title, description, and urgency',
+        'Embedding generation failed: Todo must have title and urgency',
       );
     });
 
@@ -237,28 +221,12 @@ describe('GenerateEmbeddingService', () => {
         title: 'Test Title',
         description: 'Test Description',
         urgency: TodoUrgency.HIGH,
-        user: { id: mockUserId },
       };
 
       await sut.generateForTodo(todo);
 
       expect(openAiProvider.generateEmbedding).toHaveBeenCalledWith(
-        `Título: Test Title\nDescrição: Test Description\nUrgência: high\nID do Usuário: ${mockUserId}`,
-      );
-    });
-
-    it('should include user ID in the embedding text', async () => {
-      const todo = {
-        title: 'Test Title',
-        description: 'Test Description',
-        urgency: TodoUrgency.LOW,
-        user: { id: mockUserId },
-      };
-
-      await sut.generateForTodo(todo);
-
-      expect(openAiProvider.generateEmbedding).toHaveBeenCalledWith(
-        expect.stringContaining(`ID do Usuário: ${mockUserId}`),
+        `Título: Test Title\nDescrição: Test Description\nUrgência: high`,
       );
     });
   });
