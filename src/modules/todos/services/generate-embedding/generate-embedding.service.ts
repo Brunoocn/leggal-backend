@@ -60,7 +60,6 @@ export class GenerateEmbeddingService {
   }
 
   private buildTextFromTodo(todo: Partial<Todo>): string {
-    console.log('Building text from todo:', todo);
     const context: {
       title: string;
       description?: string;
