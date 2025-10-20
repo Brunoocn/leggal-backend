@@ -31,5 +31,3 @@ $ docker-compose up -d
 O server irá subir na porta http://localhost:3005.
 
 Para acessar a documentação da api, basta acessar http://localhost:3005/api/docs.
-
-**Nota:** Ao rodar com Docker, o `PG_DATABASE_HOST` será automaticamente configurado como `db` pelo docker-compose. Para desenvolvimento local sem Docker, use `localhost`.

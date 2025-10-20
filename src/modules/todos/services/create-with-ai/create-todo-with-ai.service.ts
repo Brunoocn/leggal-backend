@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Todo, TodoUrgency } from 'src/modules/database/entities/todo.entity';
 import { ProvidersEnum } from 'src/shared/generic-enums/providers-enums';
-import { AI_PROMPT } from './prompts/ai-prompt';
+import { AI_PROMPT } from '../../../../shared/prompts/ai-prompt';
 import { IOpenAiProvider } from 'src/core/providers/openai/IOpenAiProvider';
 import { GenerateEmbeddingService } from '../generate-embedding/generate-embedding.service';
 
