@@ -72,12 +72,11 @@ describe('UpdateTodoService', () => {
     todo.user = { id: mockUserId } as any;
     await todoRepository.save(todo);
 
-    // Mock para falhar na geração do embedding
     vi.spyOn(generateEmbeddingService, 'generateForTodo').mockRejectedValue(
       new Error('Embedding generation failed'),
     );
 
-    const updateData: UpdateTodoDTO = {
+    const updateData: any = {
       title: 'Updated Title',
     };
 
