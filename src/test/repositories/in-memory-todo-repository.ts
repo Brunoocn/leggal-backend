@@ -41,7 +41,6 @@ export class InMemoryTodoRepository {
   }): Promise<[Todo[], number]> {
     let filteredTodos = [...this.todos];
 
-    // Filtrar por user.id se fornecido
     if (options?.where?.user?.id) {
       filteredTodos = filteredTodos.filter(
         (todo) => todo.user?.id === options.where.user.id,
@@ -50,14 +49,12 @@ export class InMemoryTodoRepository {
 
     const total = filteredTodos.length;
 
-    // Aplicar ordenação
     if (options?.order?.createdAt === 'DESC') {
       filteredTodos = filteredTodos.sort(
         (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
       );
     }
 
-    // Aplicar paginação
     if (options?.skip !== undefined) {
       filteredTodos = filteredTodos.slice(options.skip);
     }

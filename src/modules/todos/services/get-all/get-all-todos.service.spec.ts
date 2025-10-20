@@ -64,7 +64,6 @@ describe('GetAllTodosService', () => {
   });
 
   it('should paginate todos correctly for the user', async () => {
-    // Criar 15 todos para o usuário
     for (let i = 1; i <= 15; i++) {
       const todo = todoRepository.create({
         title: `Todo ${i}`,
@@ -75,7 +74,6 @@ describe('GetAllTodosService', () => {
       await todoRepository.save(todo);
     }
 
-    // Criar 5 todos para outro usuário (não devem aparecer)
     for (let i = 1; i <= 5; i++) {
       const todo = todoRepository.create({
         title: `Another User Todo ${i}`,

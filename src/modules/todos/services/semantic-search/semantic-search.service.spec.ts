@@ -11,6 +11,7 @@ describe('SemanticSearchService', () => {
 
   const mockEmbedding = Array(1536).fill(0.1);
   const mockQueryEmbedding = Array(1536).fill(0.2);
+  const mockUserId = 'user-123';
 
   beforeEach(() => {
     todoRepository = new InMemoryTodoRepository();
@@ -41,7 +42,7 @@ describe('SemanticSearchService', () => {
     todo.embedding = null;
     await todoRepository.save(todo);
 
-    const results = await sut.search('test query', 10);
+    const results = await sut.search('test query', 10, mockUserId);
 
     expect(results).toEqual([]);
   });
@@ -65,7 +66,7 @@ describe('SemanticSearchService', () => {
     todo2.embedding = highSimilarityEmbedding;
     await todoRepository.save(todo2);
 
-    const results = await sut.search('comprar alimentos', 10);
+    const results = await sut.search('comprar alimentos', 10, mockUserId);
 
     expect(results).toHaveLength(2);
     expect(results[0]).toHaveProperty('id');
@@ -87,7 +88,7 @@ describe('SemanticSearchService', () => {
       await todoRepository.save(todo);
     }
 
-    const results = await sut.search('test query', 3);
+    const results = await sut.search('test query', 3, mockUserId);
 
     expect(results).toHaveLength(3);
   });
@@ -112,7 +113,7 @@ describe('SemanticSearchService', () => {
     todo2.embedding = highSimilarityEmbedding;
     await todoRepository.save(todo2);
 
-    const results = await sut.search('test query', 10);
+    const results = await sut.search('test query', 10, mockUserId);
 
     expect(results).toHaveLength(2);
     expect(results[0].similarity).toBeGreaterThan(results[1].similarity);
@@ -138,7 +139,7 @@ describe('SemanticSearchService', () => {
     invalidTodo.embedding = Array(100).fill(0.1);
     await todoRepository.save(invalidTodo);
 
-    const results = await sut.search('test query', 10);
+    const results = await sut.search('test query', 10, mockUserId);
 
     expect(results).toHaveLength(1);
     expect(results[0].title).toBe('Valid todo');
@@ -147,7 +148,7 @@ describe('SemanticSearchService', () => {
   it('should call generateFromText with the search query', async () => {
     const query = 'find something';
 
-    await sut.search(query, 10);
+    await sut.search(query, 10, mockUserId);
 
     expect(generateEmbeddingService.generateFromText).toHaveBeenCalledWith(
       query,
@@ -159,7 +160,7 @@ describe('SemanticSearchService', () => {
       new Error('OpenAI API error'),
     );
 
-    await expect(sut.search('test query', 10)).rejects.toThrow(
+    await expect(sut.search('test query', 10, mockUserId)).rejects.toThrow(
       'Semantic search failed',
     );
   });
@@ -183,10 +184,8 @@ describe('SemanticSearchService', () => {
   });
 
   it('should filter out todos with similarity below threshold', async () => {
-    // Mock embedding similar to query
     const highSimilarityEmbedding = Array(1536).fill(0.2);
 
-    // Mock embedding orthogonal to query (very different)
     const lowSimilarityEmbedding = Array(1536)
       .fill(0)
       .map((_, i) => (i % 2 === 0 ? -1 : 1));
@@ -207,7 +206,7 @@ describe('SemanticSearchService', () => {
     todo2.embedding = lowSimilarityEmbedding;
     await todoRepository.save(todo2);
 
-    const results = await sut.search('test query', 10);
+    const results = await sut.search('test query', 10, mockUserId);
 
     expect(results).toHaveLength(1);
     expect(results[0].title).toBe('High similarity todo');
@@ -215,7 +214,6 @@ describe('SemanticSearchService', () => {
   });
 
   it('should return empty array when all todos have similarity below threshold', async () => {
-    // Mock embedding orthogonal to query (very low similarity)
     const lowSimilarityEmbedding = Array(1536)
       .fill(0)
       .map((_, i) => (i % 2 === 0 ? -1 : 1));
@@ -236,7 +234,7 @@ describe('SemanticSearchService', () => {
     todo2.embedding = lowSimilarityEmbedding;
     await todoRepository.save(todo2);
 
-    const results = await sut.search('test query', 10);
+    const results = await sut.search('test query', 10, mockUserId);
 
     expect(results).toEqual([]);
   });
