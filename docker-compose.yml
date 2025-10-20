@@ -31,7 +31,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "3005:3005"
+      - "3000:3000"
     command: ["node", "dist/main"]
     networks:
       - app-network
