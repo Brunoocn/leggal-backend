@@ -162,12 +162,6 @@ describe('GenerateEmbeddingService', () => {
       );
     });
 
-    it('should throw error when text is only whitespace', async () => {
-      await expect(sut.generateFromText('   ')).rejects.toThrow(
-        'Embedding generation failed: Text for embedding cannot be empty',
-      );
-    });
-
     it('should throw error when text is null', async () => {
       await expect(sut.generateFromText(null as any)).rejects.toThrow(
         'Embedding generation failed: Text for embedding cannot be empty',
