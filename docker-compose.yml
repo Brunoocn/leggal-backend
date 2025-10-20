@@ -10,6 +10,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_DB=postgres
+      - PG_DATABASE_HOST=db
     ports:
       - "5432:5432"
     healthcheck:
@@ -31,7 +32,7 @@ services:
         condition: service_healthy
     ports:
       - "3005:3005"
-    command: ["npm", "run", "start:prod" ]
+    command: ["node", "dist/main"]
     networks:
       - app-network
     env_file:
